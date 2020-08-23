@@ -224,12 +224,25 @@ export default function (Glide, Components, Events) {
      *
      * @param {Object} event
      */
-    touches (event) {
+    touches: function touches(event) {
       if (MOUSE_EVENTS.indexOf(event.type) > -1) {
-        return event
+        return event;
       }
 
-      return event.touches[0] || event.changedTouches[0]
+      function toArray(obj) {
+        return Array.prototype.slice.call(obj, 0);
+      }
+
+      function filter(arr) {
+        return toArray(arr).filter(function(v) {
+          return v.target === event.target;
+        });
+      }
+
+      var touches = filter(event.touches);
+      var changedTouches = filter(event.changedTouches);
+
+      return touches[0] || changedTouches[0];
     },
 
     /**
