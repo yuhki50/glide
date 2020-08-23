@@ -1,6 +1,6 @@
 /*!
- * Glide.js v3.4.1
- * (c) 2013-2019 Jędrzej Chałubek <jedrzej.chalubek@gmail.com> (http://jedrzejchalubek.com/)
+ * Glide.js v3.4.2
+ * (c) 2013-2020 Jędrzej Chałubek <jedrzej.chalubek@gmail.com> (http://jedrzejchalubek.com/)
  * Released under the MIT License.
  */
 
@@ -2788,9 +2788,21 @@
           return event;
         }
 
-        return event.touches[0] || event.changedTouches[0];
-      },
+        function toArray(obj) {
+          return Array.prototype.slice.call(obj, 0);
+        }
 
+        function filter(arr) {
+          return toArray(arr).filter(function (v) {
+            return v.target === event.target;
+          });
+        }
+
+        var touches = filter(event.touches);
+        var changedTouches = filter(event.changedTouches);
+
+        return touches[0] || changedTouches[0];
+      },
 
       /**
        * Gets value of minimum swipe distance settings based on event type.
@@ -3246,7 +3258,9 @@
        * @return {Void}
        */
       click: function click(event) {
-        event.preventDefault();
+        if (!supportsPassive$1 && event.type === 'touchstart') {
+          event.preventDefault();
+        }
 
         Components.Run.make(Components.Direction.resolve(event.currentTarget.getAttribute('data-glide-dir')));
       }
